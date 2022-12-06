@@ -1,0 +1,36 @@
+version: '2.1'
+services:
+ orientdb:
+     image: "orientdb:2.2.35"
+     environment:
+       - ORIENTDB_ROOT_PASSWORD=password
+     healthcheck:
+       test: ["CMD", "curl", "http://localhost:2424"]
+       interval: 10s
+       timeout: 10s
+     volumes:
+       - ./container_script/db:/orientdb/databases
+       - ./container_script/log:/orientdb/log
+ container_script:
+     image: "dimitlink/container_script_docker" 
+     depends_on:
+       orientdb:
+         condition: service_healthy
+     volumes:
+       - ./httpd/html:/db
+ httpd:
+     build: ./httpd
+     depends_on:
+       container_script:
+         condition: service_completed_successfully
+     hostname: localhost
+     ports:
+       - 80:80
+     volumes:
+       - ./httpd/html:/var/www/html
+       - ./container_script/log:/var/www/html/log
+       
+
+
+
+       
