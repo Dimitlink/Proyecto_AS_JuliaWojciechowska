@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mi-deployment-orientdb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: dep-orientdb
+  template:
+    metadata:
+      labels:
+        component: dep-orientdb
+    spec:
+      volumes:
+        - name: pv-orientdb
+          persistentVolumeClaim:
+            claimName: pvc
+      containers:
+      - name: orientdb
+        image: orientdb:2.2.35
+        env:
+        - name: ORIENTDB_ROOT_PASSWORD
+          value: "password"
+        volumeMounts:
+        - name: pv-orientdb
+          mountPath: orientdb/databases
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Mi

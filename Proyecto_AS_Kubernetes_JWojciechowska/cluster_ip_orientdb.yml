@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: c-orientdb
+spec:
+  selector:
+    component: dep-orientdb
+  ports:
+  - name: pbinario
+    port: 2424
+    targetPort: 2424
+  - name: pinterfaz
+    port: 80
+    targetPort: 2480
